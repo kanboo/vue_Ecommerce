@@ -1,0 +1,15 @@
+@import "@/sass/public/_mixin.scss";
+
+.admin {
+  body {
+    font-size: .875rem;
+  }
+
+  /*
+   * Content
+   */
+
+  [role="main"] {
+    padding-top: 48px; /* Space for fixed navbar */
+  }
+}

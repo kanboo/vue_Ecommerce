@@ -1,7 +1,13 @@
 <script>
+import AdminNavBar from '@/components/AdminNavBar'
+import AdminSideBar from '@/components/AdminSideBar'
+
 export default {
-  name: 'home',
-  components: {},
+  name: 'admin',
+  components: {
+    AdminNavBar,
+    AdminSideBar
+  },
   data() {
     return {
       title: 'Vue - Porject'
