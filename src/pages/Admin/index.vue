@@ -1,12 +1,14 @@
 <script>
 import AdminNavBar from '@/components/AdminNavBar'
 import AdminSideBar from '@/components/AdminSideBar'
+import AlertMessage from '@/components/AlertMessage'
 
 export default {
   name: 'admin',
   components: {
     AdminNavBar,
-    AdminSideBar
+    AdminSideBar,
+    AlertMessage
   },
   data() {
     return {

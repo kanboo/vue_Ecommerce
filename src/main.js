@@ -11,11 +11,21 @@ import 'bootstrap'
 import App from './App'
 import router from './router'
 import store from './store'
+import './EventBus'
+import filtersCurrency from '@/filters/currency'
+import filterDate from '@/filters/date'
+import VeeValidate from 'vee-validate'
+import zhTWValidate from 'vee-validate/dist/locale/zh_TW'
 
 Vue.use(VueAxios, axios)
 Vue.use(Vuex)
 
+VeeValidate.Validator.localize('zh_TW', zhTWValidate)
+Vue.use(VeeValidate)
+
 Vue.component('Loading', Loading)
+Vue.filter('currency', filtersCurrency)
+Vue.filter('date', filterDate)
 
 Vue.config.productionTip = false
 
@@ -37,7 +47,7 @@ router.beforeEach((to, from, next) => {
     // if not, redirect to login page.
     const api = '/api/user/check'
     axios.post(api).then(response => {
-      console.log(response.data)
+      // console.log(response.data)
       if (response.data.success) {
         next()
       } else {

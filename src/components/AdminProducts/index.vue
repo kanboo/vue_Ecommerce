@@ -1,12 +1,14 @@
 <script>
 import $ from 'jquery'
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'adminProducts',
-  components: {},
+  components: { Pagination },
   data() {
     return {
       products: [],
+      pagination: {},
       tempProduct: {},
       isNew: true,
       isLoading: false,
@@ -16,46 +18,48 @@ export default {
     }
   },
   methods: {
-    getProducts() {
-      const vm = this
-      const api = `/api/${process.env.DBPATH}/admin/products`
+    getProducts(page = 1) {
+      const api = `/api/${process.env.DBPATH}/admin/products?page=${page}`
 
-      vm.isLoading = true
+      this.isLoading = true
       this.axios.get(api).then(response => {
-        console.log('getProducts', response.data)
+        // console.log('getProducts', response.data)
         if (response.data.success) {
-          vm.$set(vm, 'products', [...response.data.products])
+          // this.$set(this, 'products', [...response.data.products])
+          this.products = response.data.products
+          this.pagination = response.data.pagination
+        } else {
+          this.$bus.$emit('messsage:push', response.data.message, 'danger')
         }
-        vm.isLoading = false
+        this.isLoading = false
       })
     },
     updateProduct() {
-      const vm = this
       // 新增
       let api = `/api/${process.env.DBPATH}/admin/product`
       let httpMethod = 'post'
 
       // 修改
-      if (!vm.isNew) {
-        api = `/api/${process.env.DBPATH}/admin/product/${vm.tempProduct.id}`
+      if (!this.isNew) {
+        api = `/api/${process.env.DBPATH}/admin/product/${this.tempProduct.id}`
         httpMethod = 'put'
       }
 
       // CallAPI
-      this.axios[httpMethod](api, { data: vm.tempProduct }).then(response => {
+      this.axios[httpMethod](api, { data: this.tempProduct }).then(response => {
         // console.log('createProducts', response.data)
         if (!response.data.success) {
-          // console.log(response.data.message)
-          console.log('新增失敗')
+          this.$bus.$emit('messsage:push', response.data.message, 'danger')
         }
         $('#productModal').modal('hide')
-        vm.getProducts()
+        this.getProducts()
       })
     },
     deleteProduct() {
-      const vm = this
       // 刪除
-      let api = `/api/${process.env.DBPATH}/admin/product/${vm.tempProduct.id}`
+      let api = `/api/${process.env.DBPATH}/admin/product/${
+        this.tempProduct.id
+      }`
       let httpMethod = 'delete'
 
       this.axios[httpMethod](api).then(response => {
@@ -63,13 +67,12 @@ export default {
         if (response.data.success) {
           // console.log(response.data.message)
           $('#delProductModal').modal('hide')
-          vm.getProducts()
+          this.getProducts()
         }
       })
     },
     uploadFile() {
       // console.log(this)
-      const vm = this
 
       const api = `/api/${process.env.DBPATH}/admin/upload`
       const uploadedFile = this.$refs.files.files[0] // 取得檔案
@@ -79,7 +82,7 @@ export default {
       formData.append('file-to-upload', uploadedFile)
 
       // loading
-      vm.status.fileUploading = true
+      this.status.fileUploading = true
 
       // Call API
       this.axios
@@ -92,21 +95,34 @@ export default {
           // console.log(response.data)
 
           if (response.data.success) {
-            vm.$set(vm.tempProduct, 'imageUrl', response.data.imageUrl)
+            this.$set(this.tempProduct, 'imageUrl', response.data.imageUrl)
           } else {
-            console.log(response.data.message)
+            this.$bus.$emit('messsage:push', response.data.message, 'danger')
           }
-          vm.status.fileUploading = false
+          this.status.fileUploading = false
         })
     },
-    openModal(isNew = true, item = {}) {
+    openModal(
+      isNew = true,
+      item = {
+        category: '手作品',
+        unit: '個',
+        is_enabled: 1
+      }
+    ) {
       this.isNew = isNew
       this.$set(this, 'tempProduct', Object.assign({}, item))
-      $('#productModal').modal('show')
+      $('#productModal').modal({
+        backdrop: 'static',
+        show: true
+      })
     },
     deleteModal(item = {}) {
       this.$set(this, 'tempProduct', Object.assign({}, item))
-      $('#delProductModal').modal('show')
+      $('#delProductModal').modal({
+        backdrop: 'static',
+        show: true
+      })
     }
   },
   created() {

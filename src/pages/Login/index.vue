@@ -12,14 +12,13 @@ export default {
   },
   methods: {
     signin() {
-      const vm = this
       const api = `${process.env.APIPATH}/signin`
-      this.axios.post(api, this.user).then(response => {
-        // console.log('signin', response.data)
-        if (response.data.success) {
-          console.log('Login~~~~')
-          // vm.$router.push({ path: '/admin' })
-          vm.$router.push({ path: '/admin/products' })
+      this.axios.post(api, this.user).then(res => {
+        // console.log('signin', res.data)
+        if (res.data.success) {
+          // console.log('Login~~~~')
+          // this.$router.push({ path: '/admin' })
+          this.$router.push({ path: '/admin/products' })
         }
       })
     }

@@ -13,7 +13,7 @@ export default {
       const api = `${process.env.APIPATH}/logout`
       this.axios.post(api).then(response => {
         if (response.data.success) {
-          console.log('logout~~~~')
+          // console.log('logout~~~~')
           vm.$router.push({ name: 'Login' })
         }
       })
