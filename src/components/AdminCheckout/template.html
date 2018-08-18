@@ -57,7 +57,9 @@
       </table>
       <div class="text-right"
            v-if="order.is_paid === false">
-        <button class="btn btn-danger">確認付款去</button>
+        <button class="btn btn-danger"
+                @click="submitted=true"
+                :disabled="submitted">>確認付款去</button>
       </div>
     </form>
   </div>

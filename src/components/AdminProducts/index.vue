@@ -46,6 +46,7 @@ export default {
       }
 
       // CallAPI
+      this.isLoading = true
       this.axios[httpMethod](api, { data: this.tempProduct }).then(response => {
         // console.log('createProducts', response.data)
         if (!response.data.success) {
@@ -62,6 +63,7 @@ export default {
       }`
       let httpMethod = 'delete'
 
+      this.isLoading = true
       this.axios[httpMethod](api).then(response => {
         // console.log('createProducts', response.data)
         if (response.data.success) {

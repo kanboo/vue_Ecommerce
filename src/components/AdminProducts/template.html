@@ -226,6 +226,7 @@
                   data-dismiss="modal">取消</button>
           <button type="button"
                   class="btn btn-primary"
+                  :disabled="isLoading"
                   @click="updateProduct">確認</button>
         </div>
       </div>
@@ -264,6 +265,7 @@
                   data-dismiss="modal">取消</button>
           <button type="button"
                   class="btn btn-danger"
+                  :disabled="isLoading"
                   @click="deleteProduct">確認刪除</button>
         </div>
       </div>

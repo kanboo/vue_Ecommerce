@@ -19,8 +19,8 @@
           <p class="card-text">{{product.content}}</p>
           <div class="d-flex align-items-baseline"
                :class="{
-                 'justify-content-end': !product.price,
-                 'justify-content-between': product.price}">
+                'justify-content-end': !product.price,
+                'justify-content-between': product.price}">
             <div class="h5"
                  v-if="!product.price">{{ product.origin_price }} 元</div>
             <del class="h6"
@@ -39,7 +39,8 @@
           </button>
           <button type="button"
                   class="btn btn-outline-danger btn-sm ml-auto"
-                  @click="addToCart(product.id)">
+                  :disabled="!!status.loadingItem"
+                  @click="addToCart({id:product.id})">
             <i class="fas fa-spinner fa-spin"
                v-if="product.id === status.loadingItem"></i>
             加到購物車
@@ -221,7 +222,9 @@
           </div>
           <select name=""
                   class="form-control mt-3"
-                  v-model="product.num">
+                  v-model="productNum">
+            <option disabled
+                    value="">請選擇</option>
             <option :value="num"
                     v-for="num in 10"
                     :key="num">
@@ -236,7 +239,8 @@
           </div>
           <button type="button"
                   class="btn btn-primary"
-                  @click="addToCart(product.id, product.num)">
+                  @click="addToCart({id:product.id, qty:product.num})"
+                  :disabled="!!status.loadingItem">
             <i class="fas fa-spinner fa-spin"
                v-if="product.id === status.loadingItem"></i>
             加到購物車

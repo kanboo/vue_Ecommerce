@@ -23,9 +23,6 @@
     "../blueprint-templates",
     "./.vscode/blueprint-templates"
   ],
-  "cSpell.words": [
-    "Kanboo",
-    "Vuex",
-    "pregh"
-  ]
+  "cSpell.words": ["Kanboo", "Vuex", "pregh"],
+  "indentRainbow.errorColor": "transparent"
 }

@@ -8,7 +8,8 @@ export default {
       order: {
         user: {}
       },
-      isLoading: false
+      isLoading: false,
+      submitted: false
     }
   },
   methods: {

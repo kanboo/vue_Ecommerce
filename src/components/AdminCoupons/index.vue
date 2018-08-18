@@ -41,6 +41,7 @@ export default {
         httpMethod = 'put'
       }
 
+      this.isLoading = true
       // CallAPI
       this.axios[httpMethod](api, { data: this.tempCoupon }).then(res => {
         // console.log('updateCouponss', res.data)
@@ -56,6 +57,7 @@ export default {
       let api = `/api/${process.env.DBPATH}/admin/coupon/${this.tempCoupon.id}`
       let httpMethod = 'delete'
 
+      this.isLoading = true
       this.axios[httpMethod](api).then(res => {
         // console.log('deleteCoupon', res.data)
         if (res.data.success) {

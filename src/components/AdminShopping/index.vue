@@ -1,14 +1,11 @@
 <script>
-import $ from 'jquery'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'adminShopping',
   components: {},
   data() {
     return {
-      products: [],
-      product: {},
-      cart: {},
       coupon_code: '',
       form: {
         user: {
@@ -18,84 +15,40 @@ export default {
           address: ''
         },
         message: ''
+      }
+    }
+  },
+  computed: {
+    ...mapState(['isLoading', 'status']),
+    ...mapState('Products', ['products', 'product', 'pagination']),
+    ...mapState('Carts', ['cart']),
+    // Vuex 遇 v-model 時，改用 computed 解決
+    // 參考：https://vuex.vuejs.org/zh/guide/forms.html
+    productNum: {
+      get() {
+        return this.product.num
       },
-      isLoading: false,
-      status: {
-        loadingItem: ''
+      set(num) {
+        this.updateProduct({ num })
       }
     }
   },
   methods: {
-    getProducts(page = 1) {
-      const api = `/api/${process.env.DBPATH}/products?page=${page}`
-
-      this.isLoading = true
-      this.axios.get(api).then(res => {
-        // console.log('getProducts', res.data)
-        if (res.data.success) {
-          this.products = res.data.products
-          this.pagination = res.data.pagination
-        } else {
-          this.$bus.$emit('messsage:push', res.data.message, 'danger')
-        }
-        this.isLoading = false
-      })
-    },
-    getProduct(id) {
-      const api = `/api/${process.env.DBPATH}/product/${id}`
-
-      this.status.loadingItem = id
-      this.axios.get(api).then(res => {
-        // console.log('getProduct', res.data)
-        if (res.data.success) {
-          this.product = res.data.product
-          $('#productModal').modal('show')
-        } else {
-          this.$bus.$emit('messsage:push', res.data.message, 'danger')
-        }
-        this.status.loadingItem = ''
-      })
-    },
-    addToCart(id, qty = 1) {
-      const api = `/api/${process.env.DBPATH}/cart`
-      const cart = {
-        product_id: id,
-        qty
-      }
-
-      this.status.loadingItem = id
-      this.axios.post(api, { data: cart }).then(res => {
-        // console.log('addToCart', res.data)
-        if (res.data.success) {
-          $('#productModal').modal('hide')
-          this.getCart()
-        } else {
-          this.$bus.$emit('messsage:push', res.data.message, 'danger')
-        }
-        this.status.loadingItem = ''
-      })
-    },
-    removeCartItem(id) {
-      const api = `/api/${process.env.DBPATH}/cart/${id}`
-
-      this.isLoading = true
-      this.axios.delete(api).then(res => {
-        // console.log('addToCart', res.data)
-        if (res.data.success) {
-          this.getCart()
-        } else {
-          this.$bus.$emit('messsage:push', res.data.message, 'danger')
-        }
-        this.isLoading = false
-      })
-    },
+    ...mapActions(['loading']),
+    ...mapMutations('Products', ['PRODUCT']),
+    ...mapActions('Products', ['getProducts', 'getProduct', 'updateProduct']),
+    ...mapActions('Carts', [
+      'removeCartItem',
+      'addToCart', // 利用物件解構賦值方式，傳遞參數
+      'getCart'
+    ]),
     addCouponCode() {
       const api = `/api/${process.env.DBPATH}/coupon`
       const coupon = {
         code: this.coupon_code
       }
 
-      this.isLoading = true
+      this.loading(true)
       this.axios.post(api, { data: coupon }).then(res => {
         // console.log('addToCart', res.data)
         if (res.data.success) {
@@ -103,22 +56,7 @@ export default {
         } else {
           this.$bus.$emit('messsage:push', res.data.message, 'danger')
         }
-        this.isLoading = false
-      })
-    },
-    getCart() {
-      const api = `/api/${process.env.DBPATH}/cart`
-
-      // this.status.loadingItem = id
-      this.axios.get(api).then(res => {
-        console.log('getCart', res.data)
-        if (res.data.success) {
-          // $('#productModal').modal('hide')
-          this.cart = res.data.data
-        } else {
-          this.$bus.$emit('messsage:push', res.data.message, 'danger')
-        }
-        // this.status.loadingItem = ''
+        this.loading(false)
       })
     },
     createOrder() {
@@ -129,18 +67,17 @@ export default {
           // do stuff if not valid.
           this.$bus.$emit('messsage:push', '表單資料尚未填寫完成', 'danger')
         } else {
-          this.isLoading = true
+          this.loading(true)
           this.axios.post(api, { data: this.form }).then(res => {
             console.log('addToCart', res.data)
             if (res.data.success) {
-              // this.getCart()
               this.$router.push({
                 path: `/customer_checkout/${res.data.orderId}`
               })
             } else {
               this.$bus.$emit('messsage:push', res.data.message, 'danger')
             }
-            this.isLoading = false
+            this.loading(false)
           })
         }
       })
