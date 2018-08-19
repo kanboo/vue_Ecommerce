@@ -46,6 +46,11 @@ export default new Router({
       component: () => import('@/pages/Admin'),
       children: [
         {
+          path: '', // 購買頁面
+          name: 'AdminShopping',
+          component: () => import('@/components/AdminShopping')
+        },
+        {
           path: 'customer_order', // 購買頁面
           name: 'AdminShopping',
           component: () => import('@/components/AdminShopping')
